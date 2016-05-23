@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 2.8)
+project( LPR )
+find_package( OpenCV REQUIRED )
+add_executable( locate.out locateLP.cpp )
+target_link_libraries( locate.out ${OpenCV_LIBS} )
