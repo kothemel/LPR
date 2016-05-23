@@ -1,6 +1,7 @@
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/highgui/highgui.hpp"
 #include <stdlib.h>
+#include <string.h>
 #include <stdio.h>
 #include <sstream>
 #include <vector>
@@ -85,20 +86,27 @@ int main( int argc, char** argv ) {
     }
 
     // Draw contours
+    int j=0;
     cv::Mat drawing = cv::Mat::zeros(edgesIm.size(), CV_8UC3);
     for (int i = 0; i < contours.size(); i++) {
-        if (!((boundRect[i].height >= boundRect[i].width/4) && (boundRect[i].height <= boundRect[i].width/3) \
-            && boundRect[i].height<=crop_rows/4 && boundRect[i].width<=crop_cols/2   \
-            && boundRect[i].height>=crop_rows/8 && boundRect[i].width>=crop_cols/4)) \
+        if (!((boundRect[i].height >= boundRect[i].width/5) && (boundRect[i].height <= boundRect[i].width/2) 
+            && boundRect[i].height<=crop_rows/4 && boundRect[i].width<=crop_cols/2   
+            && boundRect[i].height>=crop_rows/10 && boundRect[i].width>=crop_cols/6)) 
         continue;
+
+        cv::Rect roi = boundRect[i];
+        cv::Mat piece = croppedImage(roi);
+        j++;
+        imwrite("contour"+std::to_string(j)+".jpg", piece);
         cv::Scalar color = cv::Scalar(rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255));
         cv::drawContours(drawing, contours, i, color, 2, 8, hierarchy, 0, cv::Point());
         cv::rectangle(drawing, boundRect[i].tl(), boundRect[i].br(), color, 2, 8, 0);
         //circle(drawing, center[i], (int)radius[i], color, 2, 8, 0);
+
+        
     }
 
     imwrite("6_contours.jpg", drawing);
-
 
 	return 0;
 }
