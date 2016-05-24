@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 2.8)
+project( LPR )
+find_package( OpenCV REQUIRED )
+add_executable( vipb.out main.cpp )
+target_link_libraries( vipb.out ${OpenCV_LIBS} )

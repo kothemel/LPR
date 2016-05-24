@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
     cv::Mat src = cv::imread(imageName, 1);
 
     if (argc != 2 || !src.data) {
-        cout << "No image data." << endl;
+        cout << "Stage 1 - No image data." << endl;
         return 2;
     }
 
