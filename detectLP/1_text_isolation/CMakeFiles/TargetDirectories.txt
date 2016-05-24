@@ -1,0 +1,3 @@
+/Users/kothemel/Documents/LPR Project/GLPR-master/new_impl/1_text_isolation/CMakeFiles/edit_cache.dir
+/Users/kothemel/Documents/LPR Project/GLPR-master/new_impl/1_text_isolation/CMakeFiles/rebuild_cache.dir
+/Users/kothemel/Documents/LPR Project/GLPR-master/new_impl/1_text_isolation/CMakeFiles/txtiso.out.dir

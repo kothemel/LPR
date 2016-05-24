@@ -37,7 +37,7 @@ int main( int argc, char** argv ) {
 	// Note that this doesn't copy the data
 	cv::Mat croppedImage = src(myROI);
 
-	cv::imwrite("1_low_half.jpg", croppedImage);
+	cv::imwrite("output/1_low_half.jpg", croppedImage);
 
 	cv::cvtColor(croppedImage, greyIm, cv::COLOR_BGR2GRAY);
 
@@ -46,11 +46,11 @@ int main( int argc, char** argv ) {
     int crop_cols = crop_size.width;
 
 
-	cv::imwrite("2_grey_scale.jpg", greyIm);
+	cv::imwrite("output/2_grey_scale.jpg", greyIm);
 
 	cv::equalizeHist( greyIm, histeqIm );
 
-	cv::imwrite("3_hist_eq.jpg", histeqIm);	
+	cv::imwrite("output/3_hist_eq.jpg", histeqIm);	
 
 
 
@@ -62,13 +62,13 @@ int main( int argc, char** argv ) {
     cv::Mat blurIm;
     blur(histeqIm, blurIm, cv::Size(3,3));
 
-	cv::imwrite("4_blur.jpg", blurIm);
+	cv::imwrite("output/4_blur.jpg", blurIm);
 
     // Canny detector
     cv::Mat edgesIm;
     Canny(blurIm, edgesIm, thresh, thresh*ratio, kernel_size);
 
-    cv::imwrite("5_edge.jpg", edgesIm);
+    cv::imwrite("output/5_edge.jpg", edgesIm);
     
     // Find contours
     cv::findContours(edgesIm, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE, cv::Point(0,0));
@@ -88,6 +88,7 @@ int main( int argc, char** argv ) {
     // Draw contours
     int j=0;
     cv::Mat drawing = cv::Mat::zeros(edgesIm.size(), CV_8UC3);
+    cv::Mat piece[5], hsvIm[5];
     for (int i = 0; i < contours.size(); i++) {
         if (!((boundRect[i].height >= boundRect[i].width/5) && (boundRect[i].height <= boundRect[i].width/2) 
             && boundRect[i].height<=crop_rows/4 && boundRect[i].width<=crop_cols/2   
@@ -95,18 +96,50 @@ int main( int argc, char** argv ) {
         continue;
 
         cv::Rect roi = boundRect[i];
-        cv::Mat piece = croppedImage(roi);
+        piece[j] = croppedImage(roi);
+        imwrite("output/contour"+std::to_string(j)+".jpg", piece[j]);
         j++;
-        imwrite("contour"+std::to_string(j)+".jpg", piece);
+
         cv::Scalar color = cv::Scalar(rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255));
         cv::drawContours(drawing, contours, i, color, 2, 8, hierarchy, 0, cv::Point());
         cv::rectangle(drawing, boundRect[i].tl(), boundRect[i].br(), color, 2, 8, 0);
-        //circle(drawing, center[i], (int)radius[i], color, 2, 8, 0);
-
-        
+        //circle(drawing, center[i], (int)radius[i], color, 2, 8, 0);  
     }
 
-    imwrite("6_contours.jpg", drawing);
+    imwrite("output/6_contours.jpg", drawing);
+
+
+
+    int h_bins = 50; int s_bins = 60;
+    int histSize[] = { h_bins, s_bins };
+
+    float h_ranges[] = { 0, 180 };
+    float s_ranges[] = { 0, 256 };
+
+    const float* ranges[] = { h_ranges, s_ranges };
+
+    int channels[] = { 0, 1 };
+
+    cv::Mat hist[5];
+
+    for (int i=0; i<j; i++){
+        cvtColor(piece[i], hsvIm[i], cv::COLOR_BGR2HSV);
+        imwrite("output/hsvIm"+std::to_string(i)+".jpg", hsvIm[i]);
+
+        calcHist( &hsvIm[i], 1, channels, cv::Mat(), hist[i], 2, histSize, ranges, true, false );
+        //normalize( hsvIm[i], hsvIm[i], 0, 1, cv::NORM_MINMAX, -1, cv::Mat() );
+    }
+
+
+
+
+
+
+
+
+
+
+
 
 	return 0;
 }
