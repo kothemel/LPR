@@ -1,5 +1,5 @@
 #!/bin/sh
-#script
+
 EXPECTED_ARGS=1
 E_BADARGS=1
 SUCCESS=0
